@@ -85,12 +85,11 @@ class SimpleVirus(object):
             raise NoChildException()
 
 
-
 class Patient(object):
     """
     Representation of a simplified patient. The patient does not take any drugs
     and his/her virus populations have no drug resistance.
-    """    
+    """
 
     def __init__(self, viruses, maxPop):
         """
@@ -102,52 +101,61 @@ class Patient(object):
 
         maxPop: the maximum virus population for this patient (an integer)
         """
-
-        # TODO
+        self.viruses = viruses
+        self.max_pop = maxPop
 
     def getViruses(self):
         """
         Returns the viruses in this Patient.
         """
-        # TODO
-
+        return self.viruses
 
     def getMaxPop(self):
         """
         Returns the max population.
         """
-        # TODO
-
+        return self.max_pop
 
     def getTotalPop(self):
         """
-        Gets the size of the current total virus population. 
+        Gets the size of the current total virus population.
         returns: The total virus population (an integer)
         """
-
-        # TODO        
-
+        return len(self.viruses)
 
     def update(self):
         """
         Update the state of the virus population in this patient for a single
         time step. update() should execute the following steps in this order:
-        
+
         - Determine whether each virus particle survives and updates the list
-        of virus particles accordingly.   
-        
+        of virus particles accordingly.
+
         - The current population density is calculated. This population density
-          value is used until the next call to update() 
-        
-        - Based on this value of population density, determine whether each 
-          virus particle should reproduce and add offspring virus particles to 
-          the list of viruses in this patient.                    
+          value is used until the next call to update()
+
+        - Based on this value of population density, determine whether each
+          virus particle should reproduce and add offspring virus particles to
+          the list of viruses in this patient.
 
         returns: The total virus population at the end of the update (an
         integer)
         """
 
-        # TODO
+        for i in self.viruses:
+            if i.doesClear():
+                self.viruses.remove(i)
+
+        pop_desity = float(len(self.viruses) / self.max_pop)
+
+        for i in self.viruses:
+            try:
+                # self.viruses.append(i.reproduce(pop_desity))
+                self.viruses.append(i.reproduce(pop_desity))
+            except NoChildException:
+                pass
+
+        return self.getTotalPop()
 
 
 
