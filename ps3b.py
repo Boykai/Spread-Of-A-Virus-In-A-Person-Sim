@@ -23,10 +23,10 @@ End helper code
 # PROBLEM 1
 #
 class SimpleVirus(object):
-
     """
     Representation of a simple virus (does not model drug effects/resistance).
     """
+
     def __init__(self, maxBirthProb, clearProb):
         """
         Initialize a SimpleVirus instance, saves all parameters as attributes
@@ -34,20 +34,20 @@ class SimpleVirus(object):
         maxBirthProb: Maximum reproduction probability (a float between 0-1)        
         clearProb: Maximum clearance probability (a float between 0-1).
         """
-
-        # TODO
+        self.max_birth_prob = maxBirthProb
+        self.clear_prob = clearProb
 
     def getMaxBirthProb(self):
         """
         Returns the max birth probability.
         """
-        # TODO
+        return self.max_birth_prob
 
     def getClearProb(self):
         """
         Returns the clear probability.
         """
-        # TODO
+        return self.clear_prob
 
     def doesClear(self):
         """ Stochastically determines whether this virus particle is cleared from the
@@ -55,9 +55,10 @@ class SimpleVirus(object):
         returns: True with probability self.getClearProb and otherwise returns
         False.
         """
-
-        # TODO
-
+        if self.getClearProb() >= random.random():
+            return True
+        else:
+            return False
 
     def reproduce(self, popDensity):
         """
@@ -78,8 +79,10 @@ class SimpleVirus(object):
         maxBirthProb and clearProb values as this virus. Raises a
         NoChildException if this virus particle does not reproduce.
         """
-
-        # TODO
+        if self.getMaxBirthProb() * (1 - popDensity) >= random.random():
+            return SimpleVirus(self.getMaxBirthProb(), self.getClearProb())
+        else:
+            raise NoChildException()
 
 
 
