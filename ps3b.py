@@ -177,8 +177,28 @@ def simulationWithoutDrug(numViruses, maxPop, maxBirthProb, clearProb,
     clearProb: Maximum clearance probability (a float between 0-1)
     numTrials: number of simulation runs to execute (an integer)
     """
+    viruses = []
+    results = []
 
-    # TODO
+    # Run simulation
+    for viruses_created in range(numViruses):
+        viruses.append(SimpleVirus(maxBirthProb, clearProb))
+    for trials in range(numTrials):
+        current_patient = Patient(viruses, maxPop)
+        for i in range(300):
+            try:
+                results[i] += current_patient.update()
+            except:
+                results.append(current_patient.update())
+
+    # Plot graph of Number of Viruses vs Time Steps
+    pylab.figure('Without Drugs')
+    pylab.plot(range(300), [x / numTrials for x in results])
+    pylab.title('Viruses vs Time')
+    pylab.xlabel('Time Steps')
+    pylab.ylabel('Number of Viruses')
+    pylab.legend()
+    pylab.show()
 
 
 
