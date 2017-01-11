@@ -51,32 +51,32 @@ class SimpleVirus(object):
 
     def doesClear(self):
         """ Stochastically determines whether this virus particle is cleared from the
-        patient's body at a time step. 
+        patient's body at a time step.
         returns: True with probability self.getClearProb and otherwise returns
         False.
         """
 
         # TODO
 
-    
+
     def reproduce(self, popDensity):
         """
         Stochastically determines whether this virus particle reproduces at a
         time step. Called by the update() method in the Patient and
         TreatedPatient classes. The virus particle reproduces with probability
         self.maxBirthProb * (1 - popDensity).
-        
+
         If this virus particle reproduces, then reproduce() creates and returns
         the instance of the offspring SimpleVirus (which has the same
-        maxBirthProb and clearProb values as its parent).         
+        maxBirthProb and clearProb values as its parent).
 
         popDensity: the population density (a float), defined as the current
-        virus population divided by the maximum population.         
-        
+        virus population divided by the maximum population.
+
         returns: a new instance of the SimpleVirus class representing the
         offspring of this virus particle. The child should have the same
         maxBirthProb and clearProb values as this virus. Raises a
-        NoChildException if this virus particle does not reproduce.               
+        NoChildException if this virus particle does not reproduce.
         """
 
         # TODO
