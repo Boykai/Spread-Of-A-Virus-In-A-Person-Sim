@@ -208,7 +208,7 @@ def simulationWithoutDrug(numViruses, maxPop, maxBirthProb, clearProb,
 class ResistantVirus(SimpleVirus):
     """
     Representation of a virus which can have drug resistance.
-    """   
+    """
 
     def __init__(self, maxBirthProb, clearProb, resistances, mutProb):
         """
@@ -228,35 +228,38 @@ class ResistantVirus(SimpleVirus):
         the probability of the offspring acquiring or losing resistance to a drug.
         """
 
-        # TODO
-
+        SimpleVirus.__init__(self, maxBirthProb, clearProb)
+        self.resistances = resistances
+        self.mut_prob = mutProb
 
     def getResistances(self):
         """
         Returns the resistances for this virus.
         """
-        # TODO
+        return self.resistances
 
     def getMutProb(self):
         """
         Returns the mutation probability for this virus.
         """
-        # TODO
+        return self.mut_prob
 
     def isResistantTo(self, drug):
         """
         Get the state of this virus particle's resistance to a drug. This method
         is called by getResistPop() in TreatedPatient to determine how many virus
-        particles have resistance to a drug.       
+        particles have resistance to a drug.
 
         drug: The drug (a string)
 
         returns: True if this virus instance is resistant to the drug, False
         otherwise.
         """
-        
-        # TODO
 
+        if drug in self.resistances:
+            return self.resistances.get(drug)
+        else:
+            return False
 
     def reproduce(self, popDensity, activeDrugs):
         """
@@ -269,9 +272,9 @@ class ResistantVirus(SimpleVirus):
         then it will NOT reproduce.
 
         Hence, if the virus is resistant to all drugs
-        in activeDrugs, then the virus reproduces with probability:      
+        in activeDrugs, then the virus reproduces with probability:
 
-        self.maxBirthProb * (1 - popDensity).                       
+        self.maxBirthProb * (1 - popDensity).
 
         If this virus particle reproduces, then reproduce() creates and returns
         the instance of the offspring ResistantVirus (which has the same
@@ -281,7 +284,7 @@ class ResistantVirus(SimpleVirus):
         For each drug resistance trait of the virus (i.e. each key of
         self.resistances), the offspring has probability 1-mutProb of
         inheriting that resistance trait from the parent, and probability
-        mutProb of switching that resistance trait in the offspring.       
+        mutProb of switching that resistance trait in the offspring.
 
         For example, if a virus particle is resistant to guttagonol but not
         srinol, and self.mutProb is 0.1, then there is a 10% chance that
@@ -292,7 +295,7 @@ class ResistantVirus(SimpleVirus):
         srinol.
 
         popDensity: the population density (a float), defined as the current
-        virus population divided by the maximum population       
+        virus population divided by the maximum population
 
         activeDrugs: a list of the drug names acting on this virus particle
         (a list of strings).
@@ -303,7 +306,22 @@ class ResistantVirus(SimpleVirus):
         NoChildException if this virus particle does not reproduce.
         """
 
-        # TODO
+        for drug in activeDrugs:
+            if not self.isResistantTo(drug):
+                raise NoChildException
+
+        if self.getMaxBirthProb() * (1 - popDensity) >= random.random():
+            resistances_copy = dict.copy(self.getResistances())
+
+            for types in resistances_copy:
+                if self.getMutProb() > random.random():
+                    resistances_copy[types] = False
+                else:
+                    resistances_copy[types] = True
+
+            return ResistantVirus(self.getMaxBirthProb(), self.getClearProb(), resistances_copy, self.getMutProb())
+        else:
+            raise NoChildException()
 
             
 
