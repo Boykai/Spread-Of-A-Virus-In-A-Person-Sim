@@ -343,7 +343,8 @@ class TreatedPatient(Patient):
         maxPop: The  maximum virus population for this patient (an integer)
         """
 
-        # TODO
+        super().__init__(viruses, maxPop)
+        self.Presciptions = []
 
 
     def addPrescription(self, newDrug):
@@ -357,7 +358,8 @@ class TreatedPatient(Patient):
         postcondition: The list of drugs being administered to a patient is updated
         """
 
-        # TODO
+        if not newDrug in self.Presciptions:
+            self.Presciptions.append(newDrug)
 
 
     def getPrescriptions(self):
@@ -368,13 +370,13 @@ class TreatedPatient(Patient):
         patient.
         """
 
-        # TODO
+        return self.Presciptions
 
 
     def getResistPop(self, drugResist):
         """
         Get the population of virus particles resistant to the drugs listed in
-        drugResist.       
+        drugResist.
 
         drugResist: Which drug resistances to include in the population (a list
         of strings - e.g. ['guttagonol'] or ['guttagonol', 'srinol'])
@@ -382,9 +384,22 @@ class TreatedPatient(Patient):
         returns: The population of viruses (an integer) with resistances to all
         drugs in the drugResist list.
         """
+        pop_of_viruses_with_resistances = 0
 
-        # TODO
+        if not drugResist:
+            return pop_of_viruses_with_resistances
 
+        for virus in self.viruses:
+            len_of_drug_resist = len(drugResist)
+            for drug in drugResist:
+                if virus.isResistantTo(drug):
+                    len_of_drug_resist -= 1
+                else:
+                    break
+            if len_of_drug_resist == 0:
+                pop_of_viruses_with_resistances += 1
+
+        return pop_of_viruses_with_resistances
 
     def update(self):
         """
@@ -397,8 +412,8 @@ class TreatedPatient(Patient):
         - The current population density is calculated. This population density
           value is used until the next call to update().
 
-        - Based on this value of population density, determine whether each 
-          virus particle should reproduce and add offspring virus particles to 
+        - Based on this value of population density, determine whether each
+          virus particle should reproduce and add offspring virus particles to
           the list of viruses in this patient.
           The list of drugs being administered should be accounted for in the
           determination of whether each virus particle reproduces.
@@ -407,7 +422,19 @@ class TreatedPatient(Patient):
         integer)
         """
 
-        # TODO
+        for i in self.viruses:
+            if i.doesClear():
+                self.viruses.remove(i)
+
+        pop_desity = float(len(self.viruses) / self.maxPop)
+
+        for i in self.viruses:
+            try:
+                self.viruses.append(i.reproduce(pop_desity, self.getPrescriptions()))
+            except NoChildException:
+                pass
+
+        return self.getTotalPop() + self.getResistPop(self.getPrescriptions())
 
 
 
