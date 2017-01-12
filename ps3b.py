@@ -215,7 +215,7 @@ class ResistantVirus(SimpleVirus):
         Initialize a ResistantVirus instance, saves all parameters as attributes
         of the instance.
 
-        maxBirthProb: Maximum reproduction probability (a float between 0-1)       
+        maxBirthProb: Maximum reproduction probability (a float between 0-1)
 
         clearProb: Maximum clearance probability (a float between 0-1).
 
@@ -314,7 +314,7 @@ class ResistantVirus(SimpleVirus):
             resistances_copy = dict.copy(self.getResistances())
 
             for types in resistances_copy:
-                if self.getMutProb() > random.random():
+                if self.getMutProb() <= random.random():
                     resistances_copy[types] = False
                 else:
                     resistances_copy[types] = True
@@ -323,7 +323,6 @@ class ResistantVirus(SimpleVirus):
         else:
             raise NoChildException()
 
-            
 
 class TreatedPatient(Patient):
     """
@@ -335,7 +334,7 @@ class TreatedPatient(Patient):
         """
         Initialization function, saves the viruses and maxPop parameters as
         attributes. Also initializes the list of drugs being administered
-        (which should initially include no drugs).              
+        (which should initially include no drugs).
 
         viruses: The list representing the virus population (a list of
         virus instances)
@@ -345,7 +344,6 @@ class TreatedPatient(Patient):
 
         super().__init__(viruses, maxPop)
         self.Presciptions = []
-
 
     def addPrescription(self, newDrug):
         """
@@ -361,7 +359,6 @@ class TreatedPatient(Patient):
         if not newDrug in self.Presciptions:
             self.Presciptions.append(newDrug)
 
-
     def getPrescriptions(self):
         """
         Returns the drugs that are being administered to this patient.
@@ -371,7 +368,6 @@ class TreatedPatient(Patient):
         """
 
         return self.Presciptions
-
 
     def getResistPop(self, drugResist):
         """
@@ -437,7 +433,6 @@ class TreatedPatient(Patient):
         return self.getTotalPop() + self.getResistPop(self.getPrescriptions())
 
 
-
 #
 # PROBLEM 4
 #
@@ -461,7 +456,32 @@ def simulationWithDrug(numViruses, maxPop, maxBirthProb, clearProb, resistances,
     mutProb: mutation probability for each ResistantVirus particle
              (a float between 0-1). 
     numTrials: number of simulation runs to execute (an integer)
-    
+
     """
 
-    # TODO
+    viruses = []
+    results = []
+    results2 = []
+
+    for viruses_created in range(numViruses):
+        viruses.append(ResistantVirus(maxBirthProb, clearProb, resistances, mutProb))
+    for trials in range(numTrials):
+        current_patient = TreatedPatient(viruses, maxPop)
+        for i in range(300):
+            if i == 150:
+                current_patient.addPrescription('guttagonol')
+            try:
+                results[i] += current_patient.update()
+                results2[i] += float(current_patient.getResistPop(['guttagonol']))
+            except:
+                results.append(current_patient.update())
+                results2.append(float(current_patient.getResistPop(['guttagonol'])))
+
+    pylab.figure('Without Drugs')
+    pylab.plot(range(300), [x / numTrials for x in results])
+    pylab.plot(range(300), [y / numTrials for y in results2])
+    pylab.title('Viruses vs Time')
+    pylab.xlabel('Time Steps')
+    pylab.ylabel('Number of Viruses')
+    pylab.legend()
+    pylab.show()
